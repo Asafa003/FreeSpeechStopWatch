@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_appointment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/appointment_label" />
+
+    <item
+        android:id="@+id/action_prescription"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/prescription_refill_label" />
+
+    <item
+        android:id="@+id/action_daily_medication"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/daily_medication_label" />
+
+</menu>

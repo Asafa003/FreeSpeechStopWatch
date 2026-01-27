@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_clock_submerge"
+    android:id="@+id/table_container"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+
+    <TableRow  android:background="#7D7676">
+
+        <EditText
+
+            android:id="@+id/etHour"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="#B8A6A6"
+            android:ems="10"
+            android:hint="Hour"
+            android:inputType="time"
+            android:maxLength="2" />
+
+        <EditText
+            android:id="@+id/etMin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="#B8A6A6"
+            android:ems="10"
+            android:hint="Min"
+            android:inputType="time"
+            android:maxLength="2" />
+
+        <RadioGroup android:orientation="horizontal" android:layout_width="wrap_content">
+
+            <RadioButton
+                android:background="#7D7676"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AM" />
+
+            <RadioButton
+                android:id="@+id/pmRbtn"
+                android:background="#7D7676"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PM" />
+        </RadioGroup>
+    </TableRow>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:background="#B8A6A6"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/etDetails"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#B8A6A6"
+                android:hint="Details"
+                android:padding="16dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="40dp"
+            android:backgroundTint="#4C4242"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+
+</TableLayout>
