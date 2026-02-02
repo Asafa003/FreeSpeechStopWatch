@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.app.KeyguardManager;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +45,8 @@ public class AlarmNotificationActivity extends AppCompatActivity {
     private DateTime mDateTime;
     private TextView mTextView;
     private PlayTimerTask mTimerTask;
-    TextToSpeech mTextToSpeech;
+    private TextToSpeech mTextToSpeech;
+    private boolean mTtsInitialized = false;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -86,7 +88,23 @@ public class AlarmNotificationActivity extends AppCompatActivity {
             startService(soundIntent);
         }
 
-
+        // Initialize TextToSpeech
+        mTextToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = mTextToSpeech.setLanguage(Locale.getDefault());
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e(TAG, "TTS: Language not supported");
+                        mTextToSpeech.setLanguage(Locale.US);
+                    }
+                    mTtsInitialized = true;
+                    Log.i(TAG, "TTS initialized successfully");
+                } else {
+                    Log.e(TAG, "TTS initialization failed");
+                }
+            }
+        });
     }
 
     @Override
@@ -95,6 +113,13 @@ public class AlarmNotificationActivity extends AppCompatActivity {
         Log.i(TAG, "AlarmNotificationActivity.onDestroy()");
 
         stop();
+        
+        // Shutdown TextToSpeech
+        if (mTextToSpeech != null) {
+            mTextToSpeech.stop();
+            mTextToSpeech.shutdown();
+            mTextToSpeech = null;
+        }
     }
 
     @Override
@@ -137,6 +162,9 @@ public class AlarmNotificationActivity extends AppCompatActivity {
         mRingtone.play();
         if (mVibrate)
             mVibrator.vibrate(mVibratePattern, 0);
+        
+        // Speak the alarm title using text-to-speech
+        speakAlarmTitle();
     }
 
     private void stop() {
@@ -146,12 +174,35 @@ public class AlarmNotificationActivity extends AppCompatActivity {
         mRingtone.stop();
         if (mVibrate)
             mVibrator.cancel();
+        
+        // Stop text-to-speech if speaking
+        if (mTextToSpeech != null && mTextToSpeech.isSpeaking()) {
+            mTextToSpeech.stop();
+        }
     }
 
     public void onDismissClick(View view) {
 
         finish();
 
+    }
+
+    private void speakAlarmTitle() {
+        if (mTextToSpeech != null && mTtsInitialized && mAlarm != null) {
+            String textToSpeak = mAlarm.getTitle();
+            if (textToSpeak != null && !textToSpeak.isEmpty()) {
+                Log.i(TAG, "Speaking alarm title: " + textToSpeak);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    mTextToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null, "alarm_tts");
+                } else {
+                    mTextToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
+                }
+            } else {
+                Log.w(TAG, "Alarm title is empty, skipping TTS");
+            }
+        } else {
+            Log.w(TAG, "TTS not ready or alarm is null");
+        }
     }
 
     private void readPreferences() {
