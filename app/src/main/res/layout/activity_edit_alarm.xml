@@ -19,10 +19,9 @@
 
       <TextView
         style="@style/list_view"
-        android:text="Text to speech with alarm sound" />
-
+        android:text="Text-to-speech  content" />
       <EditText
-          android:hint="Text to speech with alarm sound"
+          android:hint="Text-to-speech content"
           android:layout_margin="16sp"
           android:background="#F1ECEC"
         style="@style/list_view"
