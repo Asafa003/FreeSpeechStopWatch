@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.content.Context;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -95,13 +96,25 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // ✅ ADD THIS BLOCK (Android 12+ exact alarm permission)
+        // Android 12+ exact alarm permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
                 Intent intent = new Intent(
                         android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                 );
+                startActivity(intent);
+            }
+        }
+
+        // Android 14+ full-screen intent permission (needed for alarm to auto-open)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm != null && !nm.canUseFullScreenIntent()) {
+                Intent intent = new Intent(
+                        android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT
+                );
+                intent.setData(android.net.Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
             }
         }

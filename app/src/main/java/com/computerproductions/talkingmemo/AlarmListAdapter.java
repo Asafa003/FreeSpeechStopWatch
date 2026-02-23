@@ -151,11 +151,17 @@ class AlarmListAdapter extends BaseAdapter {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        mAlarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                alarm.getDate(),
-                sender
-        );
+        // setAlarmClock() is exempt from Doze mode and grants background
+        // activity start privileges — the correct API for alarm clock apps.
+        Intent showIntent = new Intent(mContext, MainActivity.class);
+        PendingIntent showPendingIntent = PendingIntent.getActivity(
+                mContext, 0, showIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(
+                alarm.getDate(), showPendingIntent);
+
+        mAlarmManager.setAlarmClock(alarmClockInfo, sender);
     }
 
 

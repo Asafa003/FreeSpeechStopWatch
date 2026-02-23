@@ -29,6 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 public class AlarmNotificationActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -76,17 +77,13 @@ public class AlarmNotificationActivity extends AppCompatActivity {
 
         readPreferences();
 
-        Intent soundIntent = new Intent(this, SoundService.class);
-        if (reminderMessage.equals(getString(R.string.appointment_label))) {
-            soundIntent.putExtra("EXTRA_APT", R.raw.sound_appointment);
-        }if (reminderMessage.equals(getString(R.string.daily_medication_label))) {
-            soundIntent.putExtra("EXTRA_MED", R.raw.sound_medication);
-        }if (reminderMessage.equals(getString(R.string.prescription_refill_label))) {
-            soundIntent.putExtra("EXTRA_PRESC", R.raw.sound_prescription);
-        }
-        if (!reminderMessage.equals("")) {
-            startService(soundIntent);
-        }
+        // SoundService is now started from AlarmReceiver so it plays immediately
+        // even when this activity doesn't auto-launch (phone unlocked & in use).
+        // No need to start it again here.
+
+        // Dismiss the alarm notification since we're now showing the full activity
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancelAll();
 
         // Initialize TextToSpeech
         mTextToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
