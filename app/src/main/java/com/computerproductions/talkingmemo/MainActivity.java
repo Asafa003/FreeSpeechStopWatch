@@ -23,9 +23,8 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.prefs.Preferences;
 
 import androidx.annotation.NonNull;
 
@@ -54,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.i(TAG, "MainActivity.onCreate()");
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mAlarmList = findViewById(R.id.alarm_list);
 

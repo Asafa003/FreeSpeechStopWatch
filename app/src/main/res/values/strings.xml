@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">The talking memo</string>
+    <string name="app_name">The Talking Memo</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="appointment_label">Appointment</string>
-    <string name="prescription_refill_label">Prescription Refill</string>
-    <string name="daily_medication_label">Daily Medication</string>
+    <string name="quick_memo_label">Quick Memo</string>
+    <string name="important_label">Important</string>
+    <string name="recurring_label">Recurring</string>
+    <string name="edit_alarm_hint">Enter text-to-speech when alarm sounds</string>
 
 
 

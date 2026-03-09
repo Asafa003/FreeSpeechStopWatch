@@ -8,15 +8,14 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.core.content.ContextCompat;
-
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "AlarmReceiver";
-    private static final String CHANNEL_ID = "alarm_firing_channel";
+    private static final String CHANNEL_ID = "alarm_firing_channel_v2";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,10 +34,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         // in use, it shows a heads-up notification the user can tap.
         postFullScreenNotification(context, alarm, activityIntent);
 
-        // Start alarm sound immediately — don't wait for the activity to launch,
-        // because on Android 10+ the activity may not auto-open (user gets a
-        // heads-up notification instead).
-        startAlarmSound(context);
 
         // Also try starting the activity directly as a fallback.
         // On older Android this works reliably. On Android 10+ it may be silently
@@ -50,29 +45,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private void startAlarmSound(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("message_PREFS", Context.MODE_PRIVATE);
-        String reminderMessage = prefs.getString("KEY_MSG", "");
-
-        Intent soundIntent = new Intent(context, SoundService.class);
-
-        if (reminderMessage.equals(context.getString(R.string.appointment_label))) {
-            soundIntent.putExtra("EXTRA_APT", R.raw.sound_appointment);
-        }
-        if (reminderMessage.equals(context.getString(R.string.daily_medication_label))) {
-            soundIntent.putExtra("EXTRA_MED", R.raw.sound_medication);
-        }
-        if (reminderMessage.equals(context.getString(R.string.prescription_refill_label))) {
-            soundIntent.putExtra("EXTRA_PRESC", R.raw.sound_prescription);
-        }
-
-        if (!reminderMessage.isEmpty()) {
-            ContextCompat.startForegroundService(context, soundIntent);
-        }
-    }
-
     private void postFullScreenNotification(Context context, Alarm alarm, Intent activityIntent) {
-        // Create notification channel (required Android 8+, safe to call repeatedly)
+        // Create notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
@@ -81,6 +55,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             channel.setDescription("Fires when an alarm goes off");
             channel.setBypassDnd(true);
             channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            channel.enableVibration(true);
+            channel.setSound(
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+                    new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .build());
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.createNotificationChannel(channel);

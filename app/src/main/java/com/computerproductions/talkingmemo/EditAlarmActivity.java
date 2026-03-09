@@ -26,6 +26,8 @@ import java.util.GregorianCalendar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 public class EditAlarmActivity extends AppCompatActivity {
     private EditText mTitle;
     private CheckBox mAlarmEnabled;
@@ -94,7 +96,10 @@ public class EditAlarmActivity extends AppCompatActivity {
 
         updateButtons();
 
-        setTitle("Edit "+receivedMessage+" Reminder");
+        MaterialToolbar toolbar = findViewById(R.id.edit_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Edit Reminder");
+        toolbar.setNavigationOnClickListener(v -> onCancelClick(v));
     }
 
     public void onDateClick(View view) {

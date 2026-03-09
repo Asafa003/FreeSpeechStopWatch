@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 public class InfoActivity extends AppCompatActivity {
     private TextView mTextView;
 
@@ -14,10 +16,14 @@ public class InfoActivity extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_info);
 
+        MaterialToolbar toolbar = findViewById(R.id.info_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         long nextId = DataSource.getInstance(null).getNextId() - 1;
 
         mTextView = findViewById(R.id.alarms_created_text);
-        mTextView.setText("Alarms created: " + nextId);
+        mTextView.setText("Reminders created: " + nextId);
     }
 }
 

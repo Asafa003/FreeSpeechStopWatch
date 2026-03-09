@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <!-- Material 3 palette -->
+    <color name="colorPrimary">#1565C0</color>
+    <color name="colorPrimaryDark">#0D47A1</color>
+    <color name="colorAccent">#7C4DFF</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSurface">#FAFAFA</color>
+    <color name="colorSurfaceVariant">#F0F0F5</color>
+    <color name="colorOnSurface">#1C1B1F</color>
+    <color name="colorOnSurfaceVariant">#49454F</color>
+    <color name="colorOutline">#CAC4D0</color>
+    <color name="colorSecondaryContainer">#D6E3FF</color>
 
-
-    <color name="white">#ffffff</color>
+    <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="red">#ff0000</color>
-    <color name="green">#00ff00</color>
-    <color name="blue">#0000ff</color>
-    <color name="light_grey">#aaaaaa</color>
-    <color name="grey">#888888</color>
-    <color name="dark_grey">#555555</color>
+    <color name="red">#D32F2F</color>
+    <color name="green">#388E3C</color>
+    <color name="blue">#1565C0</color>
+    <color name="light_grey">#E0E0E0</color>
+    <color name="grey">#9E9E9E</color>
+    <color name="dark_grey">#616161</color>
 
-    <color name="alarm_title_active">#444444</color>
-    <color name="alarm_title_outdated">#888888</color>
-    <color name="alarm_details">#888888</color>
+    <color name="alarm_title_active">#1C1B1F</color>
+    <color name="alarm_title_outdated">#9E9E9E</color>
+    <color name="alarm_details">#49454F</color>
+
+    <!-- Gradient colors -->
+    <color name="gradient_start">#1565C0</color>
+    <color name="gradient_end">#7C4DFF</color>
+    <color name="gradient_flash_start">#0D47A1</color>
+    <color name="gradient_flash_end">#1565C0</color>
+    <color name="notification_bg_start">#1A237E</color>
+    <color name="notification_bg_end">#283593</color>
+
+    <!-- Bottom nav -->
+    <color name="bottom_nav_bg">#FFFFFF</color>
+    <color name="bottom_nav_active">#1565C0</color>
+    <color name="bottom_nav_inactive">#9E9E9E</color>
 </resources>

@@ -26,16 +26,8 @@ public class SoundService extends Service {
         startForeground(NOTIFICATION_ID, buildForegroundNotification());
 
         int soundId = 0;
-        if (intent != null) {
-            if (intent.hasExtra("EXTRA_APT")) {
-                soundId = intent.getIntExtra("EXTRA_APT", 0);
-            }
-            if (intent.hasExtra("EXTRA_MED")) {
-                soundId = intent.getIntExtra("EXTRA_MED", 0);
-            }
-            if (intent.hasExtra("EXTRA_PRESC")) {
-                soundId = intent.getIntExtra("EXTRA_PRESC", 0);
-            }
+        if (intent != null && intent.hasExtra("EXTRA_SOUND")) {
+            soundId = intent.getIntExtra("EXTRA_SOUND", 0);
         }
 
         if (soundId != 0) {

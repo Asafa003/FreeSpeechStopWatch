@@ -48,6 +48,9 @@ public class AlarmNotificationActivity extends AppCompatActivity {
     private PlayTimerTask mTimerTask;
     private TextToSpeech mTextToSpeech;
     private boolean mTtsInitialized = false;
+    private String mPendingTtsText = null;
+    private Timer mTtsRepeatTimer = null;
+    private static final long TTS_REPEAT_INTERVAL = 8000; // repeat every 8 seconds
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -97,6 +100,14 @@ public class AlarmNotificationActivity extends AppCompatActivity {
                     }
                     mTtsInitialized = true;
                     Log.i(TAG, "TTS initialized successfully");
+                    // Speak any text that was queued before TTS was ready
+                    if (mPendingTtsText != null) {
+                        Log.i(TAG, "Speaking pending TTS text: " + mPendingTtsText);
+                        mTextToSpeech.speak(mPendingTtsText, TextToSpeech.QUEUE_ADD, null, "alarm_tts");
+                        mPendingTtsText = null;
+                        // Start the repeat timer now that TTS is ready
+                        startRepeatingTts();
+                    }
                 } else {
                     Log.e(TAG, "TTS initialization failed");
                 }
@@ -160,8 +171,8 @@ public class AlarmNotificationActivity extends AppCompatActivity {
         if (mVibrate)
             mVibrator.vibrate(mVibratePattern, 0);
         
-        // Speak the alarm title using text-to-speech
-        speakAlarmTitle();
+        // Speak the alarm title repeatedly using text-to-speech
+        startRepeatingTts();
     }
 
     private void stop() {
@@ -172,7 +183,8 @@ public class AlarmNotificationActivity extends AppCompatActivity {
         if (mVibrate)
             mVibrator.cancel();
         
-        // Stop text-to-speech if speaking
+        // Stop repeating TTS
+        stopRepeatingTts();
         if (mTextToSpeech != null && mTextToSpeech.isSpeaking()) {
             mTextToSpeech.stop();
         }
@@ -184,21 +196,45 @@ public class AlarmNotificationActivity extends AppCompatActivity {
 
     }
 
-    private void speakAlarmTitle() {
-        if (mTextToSpeech != null && mTtsInitialized && mAlarm != null) {
-            String textToSpeak = mAlarm.getTitle();
-            if (textToSpeak != null && !textToSpeak.isEmpty()) {
-                Log.i(TAG, "Speaking alarm title: " + textToSpeak);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    mTextToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null, "alarm_tts");
-                } else {
-                    mTextToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null);
-                }
-            } else {
-                Log.w(TAG, "Alarm title is empty, skipping TTS");
+    private void startRepeatingTts() {
+        // Cancel any existing repeat timer
+        stopRepeatingTts();
+
+        // Speak immediately
+        speakAlarmTitle();
+
+        // Then repeat every TTS_REPEAT_INTERVAL milliseconds
+        mTtsRepeatTimer = new Timer();
+        mTtsRepeatTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> speakAlarmTitle());
             }
+        }, TTS_REPEAT_INTERVAL, TTS_REPEAT_INTERVAL);
+    }
+
+    private void stopRepeatingTts() {
+        if (mTtsRepeatTimer != null) {
+            mTtsRepeatTimer.cancel();
+            mTtsRepeatTimer = null;
+        }
+    }
+
+    private void speakAlarmTitle() {
+        if (mAlarm == null) return;
+        String textToSpeak = mAlarm.getTitle();
+        if (textToSpeak == null || textToSpeak.isEmpty()) {
+            Log.w(TAG, "Alarm title is empty, skipping TTS");
+            return;
+        }
+
+        if (mTextToSpeech != null && mTtsInitialized) {
+            Log.i(TAG, "Speaking alarm title: " + textToSpeak);
+            mTextToSpeech.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null, "alarm_tts");
         } else {
-            Log.w(TAG, "TTS not ready or alarm is null");
+            // TTS not ready yet — queue for when onInit completes
+            Log.i(TAG, "TTS not ready, queuing: " + textToSpeak);
+            mPendingTtsText = textToSpeak;
         }
     }
 
